@@ -3,7 +3,7 @@
 ## Note
 Actually synchronizer contains only one synchronizer for [Nette Framework](https://nette.org/en/).
 **HOWEVER** synchronizer is flexible and easy to extend so please if there is no synchronizer for your
-favorite framework create it according to the docs.
+favorite framework create it according to the [docs](https://github.com/composer-synchronizer/composer-synchronizer/blob/master/docs/Creating%20Synchronizer.md).
 
 ## Ready for projects (aliases)
 - [Nette Framework](https://nette.org/en/) (`nette`, `nette2`)
@@ -29,7 +29,7 @@ into the `extra section` in your project `composer.json` file.
 
 Next steps are based on which framework you are using.
 
-## Configuration for specific types
+## Configuration for specific project types
 **Common**
 
 Configuration sections:
