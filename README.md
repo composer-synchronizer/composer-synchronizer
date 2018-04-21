@@ -1,4 +1,4 @@
-# Web loader
+# Composer synchronizer
 
 ## Note
 Actually synchronizer contains only one synchronizer for [Nette Framework](https://nette.org/en/).
