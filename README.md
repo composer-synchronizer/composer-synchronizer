@@ -31,6 +31,7 @@ Next steps are based on which framework you are using.
 
 ## Configuration for specific types
 **Common**
+
 Configuration sections:
 - resources
 - gitignore
@@ -39,6 +40,7 @@ Available paths placeholders:
 - projectDir => ''
 
 **Nette Framework**
+
 - Load `composer-synchronizer.neon` in your bootstrap.php before local configuration.
 
 ````PHP
