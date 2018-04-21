@@ -1,7 +1,7 @@
 {
     "name": "composer-synchronizer/composer-synchronizer",
     "type": "composer-plugin",
-    "description": "Composer plugin that synchronizes files from vendor and simplifies package installation and configuration.",
+    "description": "Composer plugin that synchronizes files from vendor and simplifies package installation and configuration (UNOFFICIAL).",
     "keywords": ["composer", "plugin", "composer-synchronizer"],
     "license": ["BSD-3-Clause"],
     "require": {
