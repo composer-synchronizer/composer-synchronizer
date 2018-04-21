@@ -1,5 +1,8 @@
 # Composer synchronizer
-- Composer synchronizer is a composer plugin that synchronizes files from vendor and simplifies package installation and configuration (UNOFFICIAL).
+
+[![Build Status](https://travis-ci.org/composer-synchronizer/composer-synchronizer.svg?branch=master)](https://travis-ci.org/composer-synchronizer/composer-synchronizer)
+
+- Composer synchronizer is a composer plugin that synchronizes files from vendor and simplifies package installation and configuration.
 - It allows you to configure any package for any framework and synchronize or configure it automatically during the package installation
 - **Note** Actually synchronizer contains only one synchronizer for [Nette Framework](https://nette.org/en/).
 **HOWEVER** synchronizer is flexible and easy to extend so please if there is no synchronizer for your
