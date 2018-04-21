@@ -55,3 +55,6 @@ Available paths placeholders:
 - logDir => 'log'
 - tempDir => 'temp'
 - wwwDir => 'www'
+
+## Installing packages
+Packages are synchronized during installation and `only those packages that contains configuration for composer-synchronizer with the type of your project are synchronized`. Eventually composer synchronizer will look to the packages repository, if the package is configured here (THIS IS IN TODO).
