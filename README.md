@@ -1,6 +1,8 @@
 # Composer synchronizer
 
 [![Build Status](https://travis-ci.org/composer-synchronizer/composer-synchronizer.svg?branch=master)](https://travis-ci.org/composer-synchronizer/composer-synchronizer)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
+
 
 - Composer synchronizer is a composer plugin that synchronizes files from vendor and simplifies package installation and configuration.
 - It allows you to configure any package for any framework and synchronize or configure it automatically during the package installation
