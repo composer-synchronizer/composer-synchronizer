@@ -21,7 +21,7 @@ into the `extra section` in your project `composer.json` file.
 ....
 "extra": {
     "composer-synchronizer": {
-        "project-type": "SYNCHRONIZER ALIAS COMES HERE"
+        "project-type": "SYNCHRONIZER ALIAS GOES HERE"
     }
 }
 ....
