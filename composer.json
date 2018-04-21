@@ -1,0 +1,31 @@
+{
+    "name": "composer-synchronizer/composer-synchronizer",
+    "type": "composer-plugin",
+    "description": "Composer plugin that synchronizes files from vendor and simplifies package installation and configuration.",
+    "keywords": ["composer", "plugin", "composer-synchronizer"],
+    "license": ["BSD-3-Clause"],
+    "require": {
+        "php": ">= 7.1",
+        "composer-plugin-api": "^1.1"
+    },
+    "require-dev": {
+        "composer/composer": "^1.6",
+        "phpstan/phpstan": "^0.9.2",
+        "symplify/easy-coding-standard": "^4.0",
+        "tracy/tracy": "^2.4"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    },
+    "scripts": {
+        "coding-standard": "ecs check src --config tests/coding-standard/easy-coding-standard.yml",
+        "phpstan-analysis": "phpstan analyse src -c tests/phpstan/phpstan.neon --level max --autoload-file=/vendor/autoload.php",
+        "nette-tester": ""
+    },
+    "extra": {
+        "class": "ComposerSynchronizer\\Plugin",
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    },
+}
