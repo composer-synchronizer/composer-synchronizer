@@ -1,7 +1,7 @@
 # Composer synchronizer
-
-## Note
-Actually synchronizer contains only one synchronizer for [Nette Framework](https://nette.org/en/).
+- Composer synchronizer is a composer plugin that synchronizes files from vendor and simplifies package installation and configuration (UNOFFICIAL).
+- It allows you to configure any package for any framework and synchronize or configure it automatically during the package installation
+- **Note** Actually synchronizer contains only one synchronizer for [Nette Framework](https://nette.org/en/).
 **HOWEVER** synchronizer is flexible and easy to extend so please if there is no synchronizer for your
 favorite framework create it according to the [docs](https://github.com/composer-synchronizer/composer-synchronizer/blob/master/docs/Creating%20Synchronizer.md).
 
