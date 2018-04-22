@@ -17,7 +17,7 @@ favorite framework create it according to the [docs](https://github.com/composer
 ## Installation
 Install composer plugin
 ````
-composer require machy8/composer-synchronizer
+composer require composer-synchronizer/composer-synchronizer
 ````
 
 and add the type of your project into the `composer-synchronizer` section
