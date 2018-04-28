@@ -97,7 +97,7 @@ final class PackagesManager
 			if ($packageComposerJsonFileContent) {
 				$packageComposerJsonFileContent = json_decode($packageComposerJsonFileContent);
 
-				if ($packageComposerJsonFileContent->extra->{'composer-synchronizer'}->{$this->projectType}) {
+				if (isset($packageComposerJsonFileContent->extra->{'composer-synchronizer'}->{$this->projectType})) {
 					$data = $packageComposerJsonFileContent->extra->{'composer-synchronizer'}->{$this->projectType};
 				}
 			}
