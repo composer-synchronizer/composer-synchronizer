@@ -1,0 +1,17 @@
+{
+    "name": "nette2/project",
+    "require": {
+        "composer-synchronizer/composer-synchronizer": "@dev"
+    },
+    "extra": {
+        "composer-synchronizer": {
+            "project-type": "nette"
+        }
+    },
+    "repositories": [
+        {"type": "path", "url": "packages/some/package"},
+        {"type": "path", "url": "/../../../../src"}
+    ],
+    "minimal-stability": "dev",
+    "prefer-stable": true
+}

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+######## Install event ########
+cd "$PWD/tests";
+
+cd "nette-tester/Nette2/fixtures";
+composer require composer-synchronizer/composer-synchronizer:@dev;
+composer install;
+
+#### Install event single tests
+cd "$PWD/../../../../";
+"vendor/bin/tester" -p phpdbg tests/nette-tester/Nette2/InstallEventTestCase.phpt -s;
+
+
+
+######## Uninstall event ########
+cd "$PWD/tests";
+cd "nette-tester/Nette2/fixtures";
+composer remove some/package
+
+#### Install event single tests
+cd "$PWD/../../../../";
+"vendor/bin/tester" -p phpdbg tests/nette-tester/Nette2/UninstallEventTestCase.phpt -s;
