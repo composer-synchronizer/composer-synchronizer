@@ -13,13 +13,33 @@ declare(strict_types = 1);
 
 namespace ComposerSynchronizer\Synchronizers;
 
+use stdClass;
+
 
 interface SynchronizerInterface
 {
+
+	function init(): SynchronizerInterface;
+
 
 	static function getAliases(): array;
 
 
 	static function getVersionedName(): string;
+
+
+	function synchronize(): void;
+
+
+	function setComposerEventType(string $type): SynchronizerInterface;
+
+
+	function setPackageConfiguration(stdClass $configuration): SynchronizerInterface;
+
+
+	function setProjectConfiguration(stdClass $configuration): SynchronizerInterface;
+
+
+	function setProjectDirectory(string $directory): SynchronizerInterface;
 
 }
