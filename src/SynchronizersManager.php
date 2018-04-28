@@ -16,12 +16,11 @@ namespace ComposerSynchronizer;
 use Composer\Package\PackageInterface;
 use ComposerSynchronizer\Helpers;
 use ComposerSynchronizer\Synchronizers;
-use ComposerSynchronizer\Synchronizers\SynchronizerConfigurationInterface;
 use ComposerSynchronizer\Synchronizers\SynchronizerInterface;
 use stdClass;
 
 
-final class SynchronizersMaster
+final class SynchronizersManager
 {
 
 	private const ALLOWED_COMPOSER_TYPES = ['composer-plugin', 'library', null];
@@ -48,6 +47,11 @@ final class SynchronizersMaster
 	private $vendorDirectory;
 
 	/**
+	 * @var PackagesManager
+	 */
+	private $packagesManager;
+
+	/**
 	 * @var string
 	 */
 	private $lockFilePath;
@@ -72,6 +76,8 @@ final class SynchronizersMaster
 		$this->composerEventType = $eventType;
 		$this->vendorDirectory = $vendorDirectory;
 
+		$this->packagesManager = new PackagesManager();
+
 		$this->projectDirectory = $vendorDirectory .  '/..';
 		$this->lockFilePath = $this->projectDirectory . '/' . self::LOCK_FILE_NAME;
 	}
@@ -79,85 +85,54 @@ final class SynchronizersMaster
 
 	public function processPackage(PackageInterface $package): void
 	{
-		$this->processedPackage = $package;
-		$packageName = $package->getName();
-		$packageDirectory = $this->vendorDirectory . '/' . $packageName;
-		$packageConfiguration = $this->getPackageComposerConfiguration($packageDirectory);
-		if ( ! $packageConfiguration) {
+		$synchronizer = $this->getSynchronizer($this->configuration->{'project-type'});
+
+		if ( ! $synchronizer)  {
 			return;
 		}
 
-		$packageType = isset($packageConfiguration->type) ? $packageConfiguration->type : null;
-		$packageSynchronizerConfiguration = isset($packageConfiguration->extra->{Plugin::COMPOSER_SECTION_NAME})
-			? $packageConfiguration->extra->{Plugin::COMPOSER_SECTION_NAME}
-			: null;
+		$this->processedPackage = $package;
+
+		$this->packagesManager
+			->setProjectType($synchronizer->getVersionedName())
+			->setVendorDirectory($this->vendorDirectory);
+
+		$packageConfiguration = $this->packagesManager->getPackageConfiguration($package);
 		$isInstallEvent = $this->composerEventType === Plugin::INSTALL_EVENT_TYPE;
 
-		/* TODO try to load missing package configuration from github package list
-		 if ( ! $packageSynchronizerConfiguration) {
-		}*/
-
-		if ( ! $packageSynchronizerConfiguration
-			|| ! in_array($packageType, self::ALLOWED_COMPOSER_TYPES, true)
-			|| $isInstallEvent && Helpers::fileContains($this->lockFilePath, $packageConfiguration->name)
+		if ( ! $packageConfiguration
+			|| ! in_array($packageConfiguration->packageType, self::ALLOWED_COMPOSER_TYPES, true)
+			|| $isInstallEvent && Helpers::fileContains($this->lockFilePath, $this->processedPackage->getPrettyName())
 		) {
 			return;
 		}
 
-		$projectType = $this->configuration->{'project-type'};
-		$synchronizer = $this->getSynchronizer($projectType);
-
-		if ( ! $synchronizer || ! isset($packageSynchronizerConfiguration->{$projectType}))  {
-			return;
-		}
-
-		$packageInfo = '<info>' . $packageName . '</info>';
+		$packageInfo = '<info>' . $package->getName() . '</info>';
 		$packageComment = '<comment>' . $package->getFullPrettyVersion() . '</comment>';
 		$consoleLineActionName = $isInstallEvent ? 'Synchronizing' : 'Desynchronizing';
 		Helpers::consoleMessage('%s %s (%s)', [$consoleLineActionName, $packageInfo, $packageComment]);
 
 		$synchronizer
 			->setComposerEventType($this->composerEventType)
-			->setPackageConfiguration($packageSynchronizerConfiguration->{$projectType})
-			->setPackageDirectory($packageDirectory)
-			->setPackageName($packageConfiguration->name)
+			->setPackageConfiguration($packageConfiguration)
 			->setProjectConfiguration($this->configuration)
 			->setProjectDirectory($this->projectDirectory)
 			->init()
 			->synchronize();
 
 		$isInstallEvent
-			? Helpers::appendToFile($this->lockFilePath, $packageName . PHP_EOL)
-			: Helpers::removeFromFile($this->lockFilePath, $packageName . PHP_EOL);
+			? Helpers::appendToFile($this->lockFilePath, $package->getName() . PHP_EOL)
+			: Helpers::removeFromFile($this->lockFilePath, $package->getName() . PHP_EOL);
 	}
 
 
-	private function getPackageComposerConfiguration(string $packageDirectory): ?stdClass
-	{
-		$composerJsonFile = $packageDirectory . '/composer.json';
-
-		if ( ! is_file($composerJsonFile)) {
-			Helpers::consoleMessage('Composer synchronizer: file %s not found.', [$composerJsonFile]);
-			return null;
-		}
-
-		$data = json_decode(Helpers::loadFileContent($composerJsonFile));
-		if ( ! $data instanceof stdClass) {
-			Helpers::consoleMessage('Composer synchronizer: invalid %s.', [$composerJsonFile]);
-			return null;
-		}
-
-		return $data;
-	}
-
-
-	private function getSynchronizer(string $name): ?SynchronizerConfigurationInterface
+	private function getSynchronizer(string $name): ?SynchronizerInterface
 	{
 		$selectedSynchronizer = null;
 
 		/** @var SynchronizerInterface $synchronizer */
 		foreach (self::SYNCHRONIZERS_REGISTER as $synchronizer) {
-			if ($name === $synchronizer::getVersionedName() || in_array($name, $synchronizer::getAliases())) {
+			if ($name === $synchronizer::getVersionedName() || in_array($name, $synchronizer::getAliases(), true)) {
 				$selectedSynchronizer = $synchronizer;
 				break;
 			}
