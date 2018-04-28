@@ -1,7 +1,8 @@
 {
     "name": "nette2/project",
     "require": {
-        "composer-synchronizer/composer-synchronizer": "@dev"
+        "composer-synchronizer/composer-synchronizer": "@dev",
+        "some/package": "@dev"
     },
     "extra": {
         "composer-synchronizer": {
