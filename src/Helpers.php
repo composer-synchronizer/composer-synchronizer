@@ -49,6 +49,44 @@ final class Helpers
 	}
 
 
+	/**
+	 * Copies files recursively and automatically creates nested directories
+	 */
+	public static function copy(string $source, string $dest, bool $override = false): void
+	{
+		if (is_file($source)) {
+			self::copyFile($source, $dest, $override);
+			return;
+		}
+
+		$sourceHandle = opendir($source);
+
+		if ( ! $sourceHandle) {
+			throw new SynchronizerException('Failed to copy directory: failed to open source ' . $source);
+		}
+
+		while ($file = readdir($sourceHandle)) {
+			if (in_array($file, ['.', '..'], true)) {
+				continue;
+			}
+
+			if (is_dir($source . '/' . $file)) {
+				if ( ! file_exists($dest . '/' . $file)) {
+					mkdir($dest . '/' . $file, 0755);
+				}
+
+				$file .= '/';
+				self::copy($source .  $file, $dest . $file, $override);
+
+			} else {
+				$dest = rtrim($dest, '/') . '/';
+				$source = rtrim($source, '/') . '/';
+				self::copyFile($source . $file, $dest . $file, $override);
+			}
+		}
+	}
+
+
 	public static function insertIntoFile(string $filePath, string $content, ?int $flags = null): void
 	{
 		file_put_contents($filePath, $content, $flags | LOCK_EX);
@@ -74,73 +112,63 @@ final class Helpers
 	}
 
 
-	public static function loadFileContent(string $filePath): ?string
+	public static function loadFileContent(string $filePath, $context = null, $consoleMessage = true): ?string
 	{
-		self::fileExists($filePath, true);
-		return file_get_contents($filePath);
+		$fileContent = @file_get_contents($filePath, false, $context);
+
+		if ($fileContent === false) {
+			if ($consoleMessage) {
+				self::consoleMessage('File ' . $filePath . ' wasn\'t found or could not be loaded.');
+			}
+			return null;
+		};
+
+		return $fileContent;
 	}
 
 
-	public static function fileExists(string $filePath, bool $throwException = false): bool
+	public static function fileExists(string $filePath): bool
 	{
-		$fileExists = file_exists($filePath);
-
-		if ($throwException && ! $fileExists) {
-			throw new SynchronizerException('File ' . $filePath . ' not found.');
-		}
-
-		return $fileExists;
+		return file_exists($filePath);
 	}
 
 
-	/**
-	 * Copies files recursively and automatically creates nested directories
-	 */
-	public static function copy(string $source, string $dest, bool $override = false): void
+	public static function createDirectory(string $directory): void
 	{
-		$diretoryToCreate = $dest;
+		mkdir($directory, 0777, true);
+	}
 
-		if (is_file($source)) {
-			$diretoryToCreate = dirname($dest);
+
+	public static function saveFile(string $file, string $content): void
+	{
+		$pathInfo = pathinfo($file);
+
+		if ( ! is_dir($pathInfo['dirname'])) {
+			self::createDirectory($pathInfo['dirname']);
 		}
 
-		if ( ! file_exists($diretoryToCreate) && ! is_dir($diretoryToCreate)) {
-			mkdir($diretoryToCreate, 0777, true);
-		}
-
-		if (is_file($source)) {
-			self::copyFile($source, $dest, $override);
-			return;
-		}
-
-		$sourceHandle = opendir($source);
-
-		if ( ! $sourceHandle) {
-			throw new SynchronizerException('Failed to copy directory: failed to open source ' . $source);
-		}
-
-		while ($file = readdir($sourceHandle)) {
-			if (in_array($file, ['.', '..'])) {
-				continue;
-			}
-
-			if (is_dir($source . '/' . $file)) {
-				if ( ! file_exists($dest . '/' . $file)) {
-					mkdir($dest . '/' . $file, 0755);
-				}
-
-				self::copy($source . '/' . $file, $dest . '/' . $file, $override);
-
-			} else {
-				self::copyFile($source . '/' . $file, $dest . '/' . $file, $override);
-			}
-		}
+		file_put_contents($file, $content);
 	}
 
 
 	private static function copyFile(string $source, string $dest, bool $override): void
 	{
-		if ($override || ! file_exists($dest)) {
+		if ($override || ! is_file($dest)) {
+			$sourcePathInfo = pathinfo($source);
+			$destPathInfo = pathinfo($dest);
+			$destEndsWithSlash = preg_match('#\/$#', $dest);
+
+			if ($destEndsWithSlash && ! is_dir($dest)) {
+				self::createDirectory($dest);
+
+			} elseif (is_file($source) && ! is_dir($destPathInfo['dirname'])) {
+				self::createDirectory($destPathInfo['dirname']);
+			}
+
+			if (is_file($source) && preg_match('#\/$#', $dest)) {
+				$dest .= $sourcePathInfo['basename'];
+			}
+
 			copy($source,  $dest);
 		}
 	}
