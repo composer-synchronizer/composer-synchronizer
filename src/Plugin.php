@@ -76,7 +76,7 @@ final class Plugin implements PluginInterface, EventSubscriberInterface
 			return;
 		}
 
-		$synchronizersMaster = new SynchronizersMaster(
+		$synchronizersMaster = new SynchronizersManager(
 			$synchronizerConfiguration, $eventType, $event->getComposer()->getConfig()->get('vendor-dir')
 		);
 
