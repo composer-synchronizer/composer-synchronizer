@@ -18,7 +18,7 @@ use ComposerSynchronizer\Plugin;
 use stdClass;
 
 
-abstract class AbstractSynchronizer implements SynchronizerConfigurationInterface
+abstract class AbstractSynchronizer implements SynchronizerInterface
 {
 
 	private const GITIGNORE_FILE_NAME = '.gitignore';
@@ -102,42 +102,31 @@ abstract class AbstractSynchronizer implements SynchronizerConfigurationInterfac
 	}
 
 
-	public final function setComposerEventType(string $type): SynchronizerConfigurationInterface
+	public final function setComposerEventType(string $type): SynchronizerInterface
 	{
 		$this->composerEventType = $type;
 		return $this;
 	}
 
 
-	public final function setPackageConfiguration(stdClass $configuration): SynchronizerConfigurationInterface
+	public final function setPackageConfiguration(stdClass $configuration): SynchronizerInterface
 	{
-		$this->packageConfiguration = $configuration;
+		$this->packageConfiguration = $configuration->synchronizerConfiguration;
+		$this->packageDirectory = $configuration->synchronizerConfigurationDirectory;
+		$this->packageName = $configuration->packageName;
+
 		return $this;
 	}
 
 
-	public final function setPackageDirectory(string $directory): SynchronizerConfigurationInterface
-	{
-		$this->packageDirectory = $directory;
-		return $this;
-	}
-
-
-	public final function setPackageName(string $name): SynchronizerConfigurationInterface
-	{
-		$this->packageName = $name;
-		return $this;
-	}
-
-
-	public final function setProjectConfiguration(stdClass $configuration): SynchronizerConfigurationInterface
+	public final function setProjectConfiguration(stdClass $configuration): SynchronizerInterface
 	{
 		$this->projectConfiguration = $configuration;
 		return $this;
 	}
 
 
-	public final function setProjectDirectory(string $directory): SynchronizerConfigurationInterface
+	public final function setProjectDirectory(string $directory): SynchronizerInterface
 	{
 		$this->projectDirectory = $directory;
 		return $this;
@@ -180,6 +169,7 @@ abstract class AbstractSynchronizer implements SynchronizerConfigurationInterfac
 		$openTag = self::GITIGNORE_OPEN_TAG . ' ' . $this->packageName . ' ' . self::GITIGNORE_HASHTAG_CHAIN;
 		$closeTag = self::GITIGNORE_CLOSE_TAG . ' ' . $this->packageName . self::GITIGNORE_HASHTAG_CHAIN . ' ';
 		$parameters = join(PHP_EOL, $parameters);
+		$parameters = $this->replacePathPlaceholders($parameters);
 		$packageSection = $openTag . PHP_EOL . $parameters . PHP_EOL . $closeTag . PHP_EOL;
 
 		return $packageSection;
@@ -190,7 +180,7 @@ abstract class AbstractSynchronizer implements SynchronizerConfigurationInterfac
 	{
 		foreach ($resources as $resource => $targetPath) {
 			$targetPath = $this->replacePathPlaceholders($targetPath);
-			Helpers::copy($this->packageDirectory . '/' .$resource, $this->projectDirectory . '/' . $targetPath);
+			Helpers::copy($this->packageDirectory . '/' . $resource, $this->projectDirectory . '/' . $targetPath);
 		}
 	}
 
