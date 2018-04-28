@@ -16,11 +16,10 @@ namespace ComposerSynchronizer\Synchronizers\Nette2;
 use ComposerSynchronizer\Helpers;
 use ComposerSynchronizer\Plugin;
 use ComposerSynchronizer\Synchronizers\AbstractSynchronizer;
-use ComposerSynchronizer\Synchronizers\SynchronizerConfigurationInterface;
 use ComposerSynchronizer\Synchronizers\SynchronizerInterface;
 
 
-final class Nette2Synchronizer extends AbstractSynchronizer implements SynchronizerInterface
+final class Nette2Synchronizer extends AbstractSynchronizer
 {
 
 	private const CONFIGURATION_FILE = 'composer-synchronizer.neon';
@@ -39,16 +38,11 @@ final class Nette2Synchronizer extends AbstractSynchronizer implements Synchroni
 	 */
 	private $configurationFile;
 
-	/**
-	 * @var string
-	 */
-	private $configurationDirectory;
 
-
-	public function init(): SynchronizerConfigurationInterface
+	public function init(): SynchronizerInterface
 	{
-		$this->configurationDirectory = $this->projectDirectory . '/' . self::PATH_PLACEHOLDERS['configDir'];
-		$this->configurationFile = $this->configurationDirectory . '/' . self::CONFIGURATION_FILE;
+		$this->configurationFile =
+			$this->projectDirectory . '/' . self::PATH_PLACEHOLDERS['configDir'] . '/' . self::CONFIGURATION_FILE;
 
 		Helpers::copy(__DIR__ . '/resources/' . self::CONFIGURATION_FILE, $this->configurationFile);
 
