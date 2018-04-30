@@ -24,15 +24,19 @@ class UninstallEventTestCase extends AbstractUninstallEventTestCase
 
 	public function testIncludesDesyncronization(): void
 	{
-		$filePath = 'fixtures/app/config/composer-synchronizer.neon';
-		Assert::false($this->fileContains($filePath, "\t- somePackage/extension.neon"));
+		Assert::true(is_file('fixtures/app/config/composer-synchronizer.neon'));
+		Assert::matchFile('fixtures/app/config/composer-synchronizer.neon',
+			file_get_contents('expected/uninstall-event/app/config/composer-synchronizer.neon')
+		);
 	}
 
 
 	public function testGitignoreDesynchronization(): void
 	{
-		$filePath = 'fixtures/.gitignore';
-		Assert::false($this->fileContains($filePath, "www/webtemp/"));
+		Assert::true(is_file('fixtures/.gitignore'));
+		Assert::matchFile('fixtures/.gitignore',
+			file_get_contents('expected/uninstall-event/.gitignore')
+		);
 	}
 
 }
