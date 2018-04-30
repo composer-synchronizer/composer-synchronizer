@@ -63,11 +63,6 @@ final class PackagesManager
 	private $projectType;
 
 	/**
-	 * @var string|null
-	 */
-	private $remoteConfigurationFilesUrl;
-
-	/**
 	 * @var string
 	 */
 	private $vendorDirectory;

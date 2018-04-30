@@ -72,7 +72,7 @@ final class Helpers
 
 			if (is_dir($source . '/' . $file)) {
 				if ( ! file_exists($dest . '/' . $file)) {
-					mkdir($dest . '/' . $file, 0755);
+					self::createDirectory($dest);
 				}
 
 				$file .= '/';

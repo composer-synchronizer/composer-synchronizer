@@ -58,6 +58,11 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 	 */
 	public $projectDirectory;
 
+	/**
+	 * @var array
+	 */
+	private $pathsPlaceholders;
+
 
 	abstract protected function getConfigurationSections(): array;
 
@@ -135,10 +140,19 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 
 	private function replacePathPlaceholders(string $path): string
 	{
-		$pathsPlaceholders = $this->getPathsPlaceholders();
-		$pathsPlaceholders['projectDir'] = '';
+		if ( ! $this->pathsPlaceholders) {
+			$pathsPlaceholders = $this->getPathsPlaceholders();
 
-		foreach ($pathsPlaceholders as $placeholder => $placeholderPath) {
+			if (isset($this->projectConfiguration->{'paths-placeholders'})) {
+				foreach ($this->projectConfiguration->{'paths-placeholders'} as $placeholder => $placeholderPath) {
+					$pathsPlaceholders[$placeholder] = $placeholderPath;
+				}
+			}
+
+			$this->pathsPlaceholders = $pathsPlaceholders;
+		}
+
+		foreach ($this->pathsPlaceholders as $placeholder => $placeholderPath) {
 			$placeholder = self::PATH_PLACEHOLDER_DELIMITER . $placeholder . self::PATH_PLACEHOLDER_DELIMITER;
 			$path = str_replace($placeholder, $placeholderPath, $path);
 		}
