@@ -44,17 +44,12 @@ final class SynchronizersManager
 	/**
 	 * @var string
 	 */
-	private $vendorDirectory;
+	private $lockFilePath;
 
 	/**
 	 * @var PackagesManager
 	 */
 	private $packagesManager;
-
-	/**
-	 * @var string
-	 */
-	private $lockFilePath;
 
 	/**
 	 * @var string
@@ -65,6 +60,11 @@ final class SynchronizersManager
 	 * @var PackageInterface
 	 */
 	private $processedPackage;
+
+	/**
+	 * @var string
+	 */
+	private $vendorDirectory;
 
 
 	public function __construct(

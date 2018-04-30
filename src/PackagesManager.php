@@ -40,7 +40,7 @@ final class PackagesManager
 	/**
 	 * @var string
 	 */
-	private $tempDirectory;
+	private $composerEventType;
 
 	/**
 	 * @var string
@@ -55,12 +55,12 @@ final class PackagesManager
 	/**
 	 * @var string
 	 */
-	private $composerEventType;
+	private $projectType;
 
 	/**
 	 * @var string
 	 */
-	private $projectType;
+	private $tempDirectory;
 
 	/**
 	 * @var string
