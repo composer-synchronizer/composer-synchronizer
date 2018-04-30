@@ -21,6 +21,8 @@ final class PackagesManager
 {
 
 	private const API_CONTENTS_URL = 'https://api.github.com/repos/composer-synchronizer/packages/contents';
+	private const RAW_FILES_URL = 'https://raw.githubusercontent.com/composer-synchronizer/packages/master';
+
 	private const API_REQUEST_CONFIGURATION = [
 		'http' => [
 			'method' => 'GET',
@@ -33,19 +35,12 @@ final class PackagesManager
 	private const API_DIRECTORY_TYPE = 'dir';
 	private const API_FILE_TYPE = 'file';
 
-	private const RAW_FILES_URL = 'https://raw.githubusercontent.com/composer-synchronizer/packages/master';
-
 	private const PACKAGES_TEMP_DIRECTORY_NAME = 'composer-synchronizer-packages';
 
 	/**
 	 * @var string
 	 */
 	private $tempDirectory;
-
-	/**
-	 * @var resource
-	 */
-	private $apiRequestContext;
 
 	/**
 	 * @var string
@@ -56,6 +51,11 @@ final class PackagesManager
 	 * @var PackageInterface
 	 */
 	private $processedPackage;
+
+	/**
+	 * @var string
+	 */
+	private $composerEventType;
 
 	/**
 	 * @var string
@@ -98,23 +98,29 @@ final class PackagesManager
 			}
 		}
 
-		if ( ! $data) {
-			$remoteConfigurationFilesUrlPart =
-				$package->getPrettyName() . '/' . $packageVersion . '/' . $this->projectType;
+		$packageTemporaryDirectory = $this->tempDirectory . '/' . $package->getPrettyName();
+		$packageTemporaryConfigurationFilePath =
+			$packageTemporaryDirectory . '/' . $packageVersion . '/' . $this->projectType . '/config.json';
 
+		if ( ! $data
+			&& $this->composerEventType === Plugin::UNINSTALL_EVENT_TYPE
+			&& file_exists($packageTemporaryConfigurationFilePath)
+		) {
+			$data = json_decode(Helpers::loadFileContent($packageTemporaryConfigurationFilePath));
+
+		} elseif ( ! $data) {
+			$packageFilesPathPart = $packageVersion . '/' . $this->projectType;
+			$remoteConfigurationFilesUrlPart = $package->getPrettyName() . '/' . $packageFilesPathPart;
 			$remoteConfigurationFilesUrl = self::API_CONTENTS_URL . '/' . $remoteConfigurationFilesUrlPart;
 			$remoteConfigurationConfigFileUrl =
 				self::RAW_FILES_URL . '/' . $remoteConfigurationFilesUrlPart . '/config.json';
-
-			$this->apiRequestContext = stream_context_create(self::API_REQUEST_CONFIGURATION);
 			$data = Helpers::loadFileContent($remoteConfigurationConfigFileUrl, null, false);
 
 			if ($data) {
-				$this->packageConfigurationDirectory = $this->tempDirectory . '/' . $package->getPrettyName();
-				$this->downloadConfigurationFilesFromGithubRepository($remoteConfigurationFilesUrl);
-				$this->packageConfigurationDirectory =
-					$this->packageConfigurationDirectory . '/' . $packageVersion . '/' . $this->projectType;
-				$data = json_decode(Helpers::loadFileContent($this->packageConfigurationDirectory . '/config.json'));
+				$this->packageConfigurationDirectory = $packageTemporaryDirectory . '/' . $packageFilesPathPart;
+
+				$this->downloadRemoteConfigurationFiles($remoteConfigurationFilesUrl, $packageTemporaryDirectory);
+				$data = json_decode(Helpers::loadFileContent($packageTemporaryConfigurationFilePath));
 			}
 		}
 
@@ -128,6 +134,13 @@ final class PackagesManager
 		}
 
 		return null;
+	}
+
+
+	public function setComposerEventType(string $type): PackagesManager
+	{
+		$this->composerEventType = $type;
+		return $this;
 	}
 
 
@@ -145,22 +158,24 @@ final class PackagesManager
 	}
 
 
-	private function downloadConfigurationFilesFromGithubRepository(string $url): void
+	private function downloadRemoteConfigurationFiles(string $url, string $temporaryDirectory): void
 	{
-		$response = Helpers::loadFileContent($url, $this->apiRequestContext);
+		$apiRequestContext = stream_context_create(self::API_REQUEST_CONFIGURATION);
+		$response = Helpers::loadFileContent($url, $apiRequestContext);
 
 		if ( ! $response) {
 			return;
 		}
 
-		$this->downloadFiles(json_decode($response));
+		$this->downloadFiles($apiRequestContext, json_decode($response), $temporaryDirectory);
 	}
 
 
 	/**
+	 * @param resource $apiRequestContext
 	 * @param stdClass[] $apiResponse
 	 */
-	private function downloadFiles(array $apiResponse): void
+	private function downloadFiles($apiRequestContext, array $apiResponse, string $temporaryDirectory): void
 	{
 		foreach ($apiResponse as $fileOrDirectory) {
 			$fileOrDirectoryUrl = $fileOrDirectory->url;
@@ -169,21 +184,21 @@ final class PackagesManager
 				$fileOrDirectoryUrl = $fileOrDirectory->download_url;
 			}
 
-			$response = Helpers::loadFileContent($fileOrDirectoryUrl, $this->apiRequestContext);
+			$response = Helpers::loadFileContent($fileOrDirectoryUrl, $apiRequestContext);
 
 			if ( ! $response) {
 				continue;
 			}
 
 			if ($fileOrDirectory->type === self::API_DIRECTORY_TYPE) {
-				$this->downloadFiles(json_decode($response));
+				$this->downloadFiles($apiRequestContext, json_decode($response), $temporaryDirectory);
 
 			} elseif ($fileOrDirectory->type === self::API_FILE_TYPE) {
 				$filePath = str_replace(
 					self::RAW_FILES_URL . '/' . $this->processedPackage->getPrettyName() . '/', '', $fileOrDirectoryUrl
 				);
-				$filePath = $this->packageConfigurationDirectory . '/' . $filePath;
-				Helpers::saveFile($filePath, $response);
+
+				Helpers::saveFile($temporaryDirectory . '/' . $filePath, $response);
 			}
 		}
 	}

@@ -94,6 +94,7 @@ final class SynchronizersManager
 		$this->processedPackage = $package;
 
 		$this->packagesManager
+			->setComposerEventType($this->composerEventType)
 			->setProjectType($synchronizer->getVersionedName())
 			->setVendorDirectory($this->vendorDirectory);
 
