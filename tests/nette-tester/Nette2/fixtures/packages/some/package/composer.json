@@ -5,10 +5,12 @@
             "nette2": {
                 "resources": {
                     "extension.neon": "%configDir%/somePackage/",
-                    "webtemp/": "%wwwDir%/webtemp/"
+                    "webtemp/": "%wwwDir%/webtemp/",
+                    "cache/.gitignore": "%tempDir%/cache/"
                 },
                 "gitignore": [
-                    "%wwwDir%/webtemp/"
+                    "%wwwDir%/webtemp/",
+                    ".gitattributes"
                 ],
                 "includes": [
                     "somePackage/extension.neon"

@@ -24,23 +24,39 @@ class InstallEventTestCase extends AbstractInstallEventTestCase
 
 	public function testResourcesSynchronization(): void
 	{
-		Assert::true(is_file('fixtures/app/config/composer-synchronizer.neon'));
 		Assert::true(is_file('fixtures/app/config/somePackage/extension.neon'));
+		Assert::matchFile('fixtures/app/config/somePackage/extension.neon',
+			file_get_contents('expected/install-event/extension.neon')
+		);
+
+		Assert::true(is_file('fixtures/temporaryFiles/cache/.gitignore'));
+		Assert::matchFile('fixtures/temporaryFiles/cache/.gitignore',
+			file_get_contents('expected/install-event/cache/.gitignore')
+		);
+
 		Assert::true(is_file('fixtures/www/webtemp/.gitignore'));
+		Assert::matchFile('fixtures/www/webtemp/.gitignore',
+			file_get_contents('expected/install-event/webtemp/.gitignore')
+		);
+
 	}
 
 
 	public function testGitignoreSynchronization(): void
 	{
-		$filePath = 'fixtures/.gitignore';
-		Assert::true($this->fileContains($filePath, "www/webtemp/"));
+		Assert::true(is_file('fixtures/.gitignore'));
+		Assert::matchFile('fixtures/.gitignore',
+			file_get_contents('expected/install-event/.gitignore')
+		);
 	}
 
 
 	public function testIncludesSyncronization(): void
 	{
-		$filePath = 'fixtures/app/config/composer-synchronizer.neon';
-		Assert::true($this->fileContains($filePath, "\t- somePackage/extension.neon"));
+		Assert::true(is_file('fixtures/app/config/composer-synchronizer.neon'));
+		Assert::matchFile('fixtures/app/config/composer-synchronizer.neon',
+			file_get_contents('expected/install-event/app/config/composer-synchronizer.neon')
+		);
 	}
 
 }

@@ -6,12 +6,14 @@
     },
     "extra": {
         "composer-synchronizer": {
-            "project-type": "nette"
+            "project-type": "nette",
+            "paths-placeholders": {
+                "tempDir": "temporaryFiles"
+            }
         }
     },
     "repositories": [
-        {"type": "path", "url": "packages/some/package"},
-        {"type": "path", "url": "/../../../../src"}
+        {"type": "path", "url": "packages/some/package"}
     ],
     "minimal-stability": "dev",
     "prefer-stable": true

@@ -1,0 +1,4 @@
+########< some/package ########
+www/webtemp/
+.gitattributes
+########> some/package ########
