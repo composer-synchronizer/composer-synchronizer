@@ -121,7 +121,12 @@ final class PackagesManager
 				$this->packageConfigurationDirectory = $packageTemporaryDirectory . '/' . $packageFilesPathPart;
 
 				$this->downloadRemoteConfigurationFiles($remoteConfigurationFilesUrl, $packageTemporaryDirectory);
-				$data = json_decode(Helpers::loadFileContent($packageTemporaryConfigurationFilePath));
+				$packageTemporaryConfigurationFileContent =
+					Helpers::loadFileContent($packageTemporaryConfigurationFilePath);
+
+				if ($packageTemporaryConfigurationFileContent) {
+					$data = json_decode($data);
+				}
 			}
 		}
 
