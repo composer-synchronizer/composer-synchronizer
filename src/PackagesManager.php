@@ -83,7 +83,8 @@ final class PackagesManager
 		$this->processedPackage = $package;
 		$this->packageConfigurationDirectory = $this->vendorDirectory . '/' . $package->getPrettyName();
 		$packageComposerJsonFile = $this->packageConfigurationDirectory . '/composer.json';
-		$packageVersion = preg_replace('#(?:\.0)+$#', '', $package->getVersion());
+		preg_match('#(?<version>\d+\.\d+)+$#', $package->getVersion(), $matches);
+		$packageVersion = $matches['version'];
 		$data = null;
 
 		if (is_file($packageComposerJsonFile)) {
