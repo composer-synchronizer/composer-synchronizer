@@ -12,12 +12,12 @@ under the framework synchronizer label (in this example `nette`).
     "composer-synchronizer": {
         "nette": {
             "resources": {
-                "synchronizer/nette/config/": "%configDir%/myPackage/"
+                "synchronizer/nette/config/": "%configDir%/myPackage/",
                 "synchronizer/nette/assets/": "%wwwDir%/assets/",
             },
             "includes": [
                 "myPackage/extension.neon"
-            ]
+            ],
             "gitignore": [
                 ".somefile",
                 "somedirectory/"
@@ -34,6 +34,7 @@ On desynchronization this section is removed.
 
 ## Configuration sections for frameworks ##
 **Nette**
+
 In the first initialization creates a `composer-synchronizer.neon` file in the `app/config` directory
 - Includes - Appends path to extension file into the composer-synchronizer.neon file that is included in the bootstrap.php.
 On desynchronization of some package, the path to that package extension file is removed.
