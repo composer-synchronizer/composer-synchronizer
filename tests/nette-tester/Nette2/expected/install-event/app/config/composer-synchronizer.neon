@@ -1,3 +1,4 @@
 # This file was created by composer-synchronizer/composer-synchronizer package
 includes:
 	- somePackage/extension.neon
+	- webloader/webloader.neon

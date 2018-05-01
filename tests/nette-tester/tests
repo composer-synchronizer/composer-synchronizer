@@ -3,7 +3,7 @@
 ######## Install event ########
 cd "$PWD/tests";
 
-cd "nette-tester/Nette2/fixtures";
+cd "nette-tester/Nette2/actual";
 composer install;
 
 #### Install event single tests
@@ -14,7 +14,7 @@ cd "$PWD/../../../../";
 
 ######## Uninstall event ########
 cd "$PWD/tests";
-cd "nette-tester/Nette2/fixtures";
+cd "nette-tester/Nette2/actual";
 composer remove some/package
 
 #### Install event single tests
