@@ -2,6 +2,7 @@
     "name": "nette2/project",
     "require": {
         "composer-synchronizer/composer-synchronizer": "@dev",
+        "some/package": "@dev",
         "machy8/webloader": "1.2.0"
     },
     "extra": {
