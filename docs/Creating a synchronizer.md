@@ -1,4 +1,4 @@
-# Creating synchronizer
+# Creating a synchronizer
 If you want to create a synchronizer for your favorite framework, you need to send a pull request.
 Creating a new synchronizer plugin is very easy and all you need to do is
 extend the `AbstractSynchronizer` class and register the synchronizer in the
@@ -24,7 +24,7 @@ When you have versioned name for example `nette2` and `nette2` is the "latest" v
 ## getVersionedName()
 Returns the versioned name for the synchronizer. For example for Nette 2.0.* => `nette2`. For `Nette 3.0` it would be `nette3` (if the synchronizer exists).
 
-# Adding synchronizing and desynchronizing methods
+## Adding synchronizing and desynchronizing methods
 - Synchronizing and desynchronizing methods should be `protected`.
 - Only one parameter is passed to these methods and its type depends on [which data type](https://www.w3schools.com/js/js_json_datatypes.asp)
 is passed as value for the section in the composer.json configuration section.
