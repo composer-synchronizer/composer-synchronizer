@@ -17,6 +17,6 @@ cd "$PWD/tests";
 cd "nette-tester/Nette2/actual";
 composer remove some/package
 
-#### Install event single tests
+#### Uninstall event single tests
 cd "$PWD/../../../../";
 "vendor/bin/tester" -p phpdbg tests/nette-tester/Nette2/UninstallEventTestCase.phpt -s;
