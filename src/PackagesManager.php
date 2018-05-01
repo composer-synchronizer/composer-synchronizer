@@ -28,7 +28,8 @@ final class PackagesManager
 			'method' => 'GET',
 			'header' => [
 				'User-Agent: PHP'
-			]
+			],
+			'timeout' => 15
 		]
 	];
 
