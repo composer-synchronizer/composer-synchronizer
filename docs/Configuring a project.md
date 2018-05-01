@@ -1,4 +1,4 @@
-# Configuring project
+# Configuring a project
 Configuring project for the synchronizer is pretty simple. Actually,
 you can add `project-type` and `paths-placeholders` section.
 
