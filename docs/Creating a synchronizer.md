@@ -1,4 +1,4 @@
-# Creating synchronizer
+# Creating a synchronizer
 If you want to create a synchronizer for your favorite framework, you need to send a pull request.
 Creating a new synchronizer plugin is very easy and all you need to do is
 extend the `AbstractSynchronizer` class and register the synchronizer in the
