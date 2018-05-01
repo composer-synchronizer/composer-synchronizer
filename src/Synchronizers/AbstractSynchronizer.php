@@ -149,6 +149,7 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 				}
 			}
 
+			$pathsPlaceholders['projectDir'] = $this->projectDirectory;
 			$this->pathsPlaceholders = $pathsPlaceholders;
 		}
 
