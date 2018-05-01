@@ -34,7 +34,7 @@ composer require machy8/webloader
 
 - Composer synchronizer will create a webtemp directory, file for loading extensions files and it will copy
 the webloader extension file into the configuration directory.
-- Tp make it all works, juse load the configuration file `composer-synchronizer.neon` in your bootstrap.php file.
+- To make it all works, just load the configuration file `composer-synchronizer.neon` in your bootstrap.php file.
 
 ## Using other framework? ##
 - Actually there is only one synchronizer and that for [Nette Framework](https://nette.org/en/) (others comming soon).
