@@ -1,4 +1,4 @@
-# Configuring package for synchronizer #
+# Configuring a package for synchronizer #
 Package can be configured for synchronizer very easily.
 
 - First decide which frameworks you want to support.
