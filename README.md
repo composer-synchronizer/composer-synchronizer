@@ -40,3 +40,6 @@ the webloader extension file into the configuration directory.
 - Actually there is only one synchronizer and that for [Nette Framework](https://nette.org/en/) (others comming soon).
 - Is the synchronizer for your framework missing? Send a pull request. It is easy to create a custom synchronizer. Just take
 a look at the [docs](https://github.com/composer-synchronizer/composer-synchronizer/blob/master/docs/Creating%20a%20synchronizer.md).
+
+## Note
+Requests on remote configuration files are limited by [Github rate limit](https://developer.github.com/v3/rate_limit/).
