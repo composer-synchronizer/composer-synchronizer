@@ -3,4 +3,5 @@
 /.github export-ignore
 /.travis.yml export-ignore
 /tests/ export-ignore
+/synchronizer-demo.gif export-ignore
 *.sh eol=lf
