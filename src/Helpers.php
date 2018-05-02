@@ -87,6 +87,16 @@ final class Helpers
 	}
 
 
+	public static function deleteFile(string $filePath): void
+	{
+		if ( ! file_exists($filePath)) {
+			return;
+		}
+
+		unlink($filePath);
+	}
+
+
 	public static function insertIntoFile(string $filePath, string $content, ?int $flags = null): void
 	{
 		file_put_contents($filePath, $content, $flags | LOCK_EX);
@@ -103,7 +113,7 @@ final class Helpers
 
 	public static function fileContains(string $filePath, string $content): bool
 	{
-		if ( ! self::fileExists($filePath)) {
+		if ( ! file_exists($filePath)) {
 			return false;
 		}
 
@@ -124,12 +134,6 @@ final class Helpers
 		};
 
 		return $fileContent;
-	}
-
-
-	public static function fileExists(string $filePath): bool
-	{
-		return file_exists($filePath);
 	}
 
 
