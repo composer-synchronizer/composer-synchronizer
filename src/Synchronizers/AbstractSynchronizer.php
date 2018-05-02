@@ -90,16 +90,6 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 	private function getDefaultConfigurationSections(): array
 	{
 		return [
-			'after-install-commands' => [
-				Plugin::INSTALL_EVENT_TYPE => function ($sectionContent) {
-					$this->executeCommands($sectionContent);
-				}
-			],
-			'after-uninstall-commands' => [
-				Plugin::UNINSTALL_EVENT_TYPE => function ($sectionContent) {
-					$this->executeCommands($sectionContent);
-				}
-			],
 			'gitignore' => [
 				Plugin::INSTALL_EVENT_TYPE => function ($sectionContent) {
 					$this->synchronizeGitignore($sectionContent);
@@ -172,19 +162,6 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 
 
 	/*************************** Synchronization methods ***************************/
-
-
-	private function executeCommands(array $commands): void
-	{
-		foreach ($commands as $command) {
-			$command = $this->replacePathPlaceholders($command);
-			preg_match_all('#(?<function>\S+)\((?<parameters>[^\(\)]*)\)#', $command, $matches, PREG_SET_ORDER);
-
-			foreach ($matches as $match) {
-				$match['function']($match['parameters']);
-			}
-		}
-	}
 
 
 	private function synchronizeGitignore(array $parameters): void
