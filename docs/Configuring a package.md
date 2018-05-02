@@ -1,11 +1,10 @@
 # Configuring a package for synchronizer #
 Package can be configured for synchronizer very easily.
 
-- First decide which frameworks you want to support.
-- Then choose an alias or name of the synchronizer given for selected framework.
-- Another step is to create a `composer-synchronizer` section in the `extra section` in your package `composer.json` file
+- Choose an alias or name of the synchronizer given for selected framework.
+- Create a `composer-synchronizer` section in the `extra section` in your package `composer.json` file
 under the framework synchronizer label (in this example `nette`).
-- The last step is to add a custom directory in your package, where the configuration files will be stored and from where the synchronizer will copy them.
+- Add a custom directory in your package, where the configuration files will be stored and from where the synchronizer will copy them.
 
 **Example for Nette framework (local)**
 ````JSON
@@ -48,14 +47,26 @@ under the framework synchronizer label (in this example `nette`).
 }
 ````
 
-## Common configuration sections ##
+## Common configuration options ##
+These options are available for all projects types.
+
+**Sections**
 - Resources - files and directories in this section are copied into selected paths.
 - Gitignore - array of files and directories that are added into the .gitignore file in the project root into the package section.
 On desynchronization this section is removed.
 
-## Configuration sections for frameworks ##
-**Nette**
+## Specific configuration options ##
 
-In the first initialization creates a `composer-synchronizer.neon` file in the `app/config` directory
+### Nette
+In the first initialization creates a `composer-synchronizer.neon` file in the `app/config` directory.
+
+**Sections**
 - Includes - Appends path to extension file into the composer-synchronizer.neon file that is included in the bootstrap.php.
 On desynchronization of some package, the path to that package extension file is removed.
+
+**Paths placeholders**
+- appDir => app
+- configDir => app/config
+- logDir => log
+- tempDir => temp
+- wwwDir => www
