@@ -5,6 +5,9 @@
 
 - Composer Synchronizer is a composer plugin that synchronizes files from vendor and simplifies package installation and configuration.
 - It allows you to configure any package for any framework and synchronize or configure it automatically during the package installation.
+<p align="center">
+    <img src="https://github.com/composer-synchronizer/composer-synchronizer/blob/master/synchronizer-demo.gif" alt="">
+</p>
 
 ## Docs
 - [Configuring a package](https://github.com/composer-synchronizer/composer-synchronizer/blob/master/docs/Configuring%20a%20package.md)
