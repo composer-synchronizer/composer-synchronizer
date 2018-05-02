@@ -90,9 +90,14 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 	private function getDefaultConfigurationSections(): array
 	{
 		return [
-			'resources' => [
+			'after-install-commands' => [
 				Plugin::INSTALL_EVENT_TYPE => function ($sectionContent) {
-					$this->synchronizeResources($sectionContent);
+					$this->executeCommands($sectionContent);
+				}
+			],
+			'after-uninstall-commands' => [
+				Plugin::UNINSTALL_EVENT_TYPE => function ($sectionContent) {
+					$this->executeCommands($sectionContent);
 				}
 			],
 			'gitignore' => [
@@ -101,6 +106,11 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 				},
 				Plugin::UNINSTALL_EVENT_TYPE => function ($sectionContent) {
 					$this->desynchronizeGitignore($sectionContent);
+				}
+			],
+			'resources' => [
+				Plugin::INSTALL_EVENT_TYPE => function ($sectionContent) {
+					$this->synchronizeResources($sectionContent);
 				}
 			]
 		];
@@ -138,7 +148,7 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 	}
 
 
-	private function replacePathPlaceholders(string $path): string
+	private function replacePathPlaceholders(string $content): string
 	{
 		if ( ! $this->pathsPlaceholders) {
 			$pathsPlaceholders = $this->getPathsPlaceholders();
@@ -154,14 +164,27 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 
 		foreach ($this->pathsPlaceholders as $placeholder => $placeholderPath) {
 			$placeholder = self::PATH_PLACEHOLDER_DELIMITER . $placeholder . self::PATH_PLACEHOLDER_DELIMITER;
-			$path = str_replace($placeholder, $placeholderPath, $path);
+			$content = str_replace($placeholder, $placeholderPath, $content);
 		}
 
-		return $path;
+		return $content;
 	}
 
 
-	/*************************** Synchronization methods  ***************************/
+	/*************************** Synchronization methods ***************************/
+
+
+	private function executeCommands(array $commands): void
+	{
+		foreach ($commands as $command) {
+			$command = $this->replacePathPlaceholders($command);
+			preg_match_all('#(?<function>\S+)\((?<parameters>[^\(\)]*)\)#', $command, $matches, PREG_SET_ORDER);
+
+			foreach ($matches as $match) {
+				$match['function']($match['parameters']);
+			}
+		}
+	}
 
 
 	private function synchronizeGitignore(array $parameters): void
