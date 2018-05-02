@@ -59,6 +59,11 @@ final class PackagesManager
 	private $projectType;
 
 	/**
+	 * @var bool
+	 */
+	private $remoteConfigurationFilesDownloadFailed = FALSE;
+
+	/**
 	 * @var string
 	 */
 	private $tempDirectory;
@@ -112,21 +117,32 @@ final class PackagesManager
 
 		} elseif ( ! $data) {
 			$packageFilesPathPart = $packageVersion . '/' . $this->projectType;
-			$remoteConfigurationFilesUrlPart = $package->getPrettyName() . '/' . $packageFilesPathPart;
-			$remoteConfigurationFilesUrl = self::API_CONTENTS_URL . '/' . $remoteConfigurationFilesUrlPart;
-			$remoteConfigurationConfigFileUrl =
-				self::RAW_FILES_URL . '/' . $remoteConfigurationFilesUrlPart . '/config.json';
-			$data = Helpers::loadFileContent($remoteConfigurationConfigFileUrl, null, false);
+			$packageRemoteConfigurationFilesUrlPart = $package->getPrettyName() . '/' . $packageFilesPathPart;
+			$packageRemoteConfigurationFilesUrl =
+				self::API_CONTENTS_URL . '/' . $packageRemoteConfigurationFilesUrlPart;
 
-			if ($data) {
+			$packageRemoteConfigurationConfigFileUrl =
+				self::RAW_FILES_URL . '/' . $packageRemoteConfigurationFilesUrlPart . '/config.json';
+
+			$packageRemoteConfigFileContent = Helpers::loadFileContent(
+				$packageRemoteConfigurationConfigFileUrl, null, false
+			);
+
+			if ($packageRemoteConfigFileContent) {
 				$this->packageConfigurationDirectory = $packageTemporaryDirectory . '/' . $packageFilesPathPart;
 
-				$this->downloadRemoteConfigurationFiles($remoteConfigurationFilesUrl, $packageTemporaryDirectory);
-				$packageTemporaryConfigurationFileContent =
-					Helpers::loadFileContent($packageTemporaryConfigurationFilePath);
+				$this->downloadRemoteConfigurationFiles(
+					$packageRemoteConfigurationFilesUrl, $packageTemporaryDirectory
+				);
 
-				if ($packageTemporaryConfigurationFileContent) {
-					$data = json_decode($data);
+				if ( ! $this->remoteConfigurationFilesDownloadFailed) {
+					$packageTemporaryConfigurationFileContent = Helpers::loadFileContent(
+						$packageTemporaryConfigurationFilePath
+					);
+
+					if ($packageTemporaryConfigurationFileContent) {
+						$data = json_decode($packageTemporaryConfigurationFileContent);
+					}
 				}
 			}
 		}
@@ -175,6 +191,10 @@ final class PackagesManager
 		}
 
 		$this->downloadFiles($apiRequestContext, json_decode($response), $temporaryDirectory);
+
+		if ($this->remoteConfigurationFilesDownloadFailed) {
+			Helpers::deleteFile($temporaryDirectory . '/config.json');
+		}
 	}
 
 
@@ -185,6 +205,10 @@ final class PackagesManager
 	private function downloadFiles($apiRequestContext, array $apiResponse, string $temporaryDirectory): void
 	{
 		foreach ($apiResponse as $fileOrDirectory) {
+			if ($this->remoteConfigurationFilesDownloadFailed) {
+				break;
+			}
+
 			$fileOrDirectoryUrl = $fileOrDirectory->url;
 
 			if ($fileOrDirectory->type === self::API_FILE_TYPE) {
@@ -194,7 +218,8 @@ final class PackagesManager
 			$response = Helpers::loadFileContent($fileOrDirectoryUrl, $apiRequestContext);
 
 			if ( ! $response) {
-				continue;
+				$this->remoteConfigurationFilesDownloadFailed = TRUE;
+				break;
 			}
 
 			if ($fileOrDirectory->type === self::API_DIRECTORY_TYPE) {
