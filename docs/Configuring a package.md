@@ -6,7 +6,7 @@ Package can be configured for synchronizer very easily.
 - Another step is to create a `composer-synchronizer` section in the `extra section` in your package `composer.json` file
 under the framework synchronizer label (in this example `nette`).
 
-**Example for Nette framework**
+**Example for Nette framework (local)**
 ````JSON
 "extra": {
     "composer-synchronizer": {
@@ -24,6 +24,25 @@ under the framework synchronizer label (in this example `nette`).
             ]
         }
     }
+}
+````
+
+**Example for Nette framework (remote)**
+- Create a config.json and add files into the [packages repository](https://github.com/composer-synchronizer/packages) in the directory with the following mask `<package name>/<version>/<project type>` => `machy8/webloader/1.2/nette2/config.json`.
+
+````JSON
+{
+    "resources": {
+        "synchronizer/nette/config/": "%configDir%/myPackage/",
+        "synchronizer/nette/assets/": "%wwwDir%/assets/",
+    },
+    "includes": [
+        "myPackage/extension.neon"
+    ],
+    "gitignore": [
+        ".somefile",
+        "somedirectory/"
+    ]
 }
 ````
 
