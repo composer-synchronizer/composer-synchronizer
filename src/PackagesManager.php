@@ -61,7 +61,7 @@ final class PackagesManager
 	/**
 	 * @var bool
 	 */
-	private $remoteConfigurationFilesDownloadFailed = FALSE;
+	private $remoteConfigurationFilesDownloadFailed = false;
 
 	/**
 	 * @var string
@@ -218,7 +218,7 @@ final class PackagesManager
 			$response = Helpers::loadFileContent($fileOrDirectoryUrl, $apiRequestContext);
 
 			if ( ! $response) {
-				$this->remoteConfigurationFilesDownloadFailed = TRUE;
+				$this->remoteConfigurationFilesDownloadFailed = true;
 				break;
 			}
 
