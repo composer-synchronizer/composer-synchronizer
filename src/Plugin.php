@@ -64,14 +64,15 @@ final class Plugin implements PluginInterface, EventSubscriberInterface
 		Helpers::setIo($event->getIO());
 		$composerExtraSection = $event->getComposer()->getPackage()->getExtra();
 		$event->getComposer()->getRepositoryManager()->getLocalRepository();
-		$synchronizerConfiguration = isset($composerExtraSection[self::COMPOSER_SECTION_NAME])
-			? (object) $composerExtraSection[self::COMPOSER_SECTION_NAME]
-			: null;
+		$synchronizerConfiguration = Helpers::getProperty($composerExtraSection, self::COMPOSER_SECTION_NAME);
 
 		if ( ! $synchronizerConfiguration) {
 			return;
+		}
 
-		} elseif ( ! isset($synchronizerConfiguration->{'project-type'})) {
+		$synchronizerConfiguration = (object) $synchronizerConfiguration;
+
+		if ( ! Helpers::getProperty($synchronizerConfiguration, 'project-type')) {
 			Helpers::consoleMessage('Composer synchronizer: project-type section is missing.');
 			return;
 		}
