@@ -64,6 +64,11 @@ final class PackagesManager
 	private $remoteConfigurationFilesDownloadFailed = false;
 
 	/**
+	 * @var bool
+	 */
+	private $remoteConfigurationsEnabled = true;
+
+	/**
 	 * @var string
 	 */
 	private $tempDirectory;
@@ -84,64 +89,79 @@ final class PackagesManager
 	}
 
 
+	public function disableRemoteConfigurations(): PackagesManager
+	{
+		$this->remoteConfigurationsEnabled = false;
+		return $this;
+	}
+
+
 	public function getPackageConfiguration(PackageInterface $package): ?stdClass
 	{
 		$this->processedPackage = $package;
 		$this->packageConfigurationDirectory = $this->vendorDirectory . '/' . $package->getPrettyName();
 		$packageComposerJsonFile = $this->packageConfigurationDirectory . '/composer.json';
 		preg_match('#^(?<version>\d+\.\d+)#', $package->getVersion(), $matches);
-		$packageVersion = isset($matches['version']) ? $matches['version'] : $package->getVersion();
 		$data = null;
+		$packageVersion = Helpers::getProperty($matches, 'version');
+
+		if ( ! $packageVersion) {
+			$packageVersion = $package->getVersion();
+		}
 
 		if (is_file($packageComposerJsonFile)) {
 			$packageComposerJsonFileContent = Helpers::loadFileContent($packageComposerJsonFile);
 
 			if ($packageComposerJsonFileContent) {
 				$packageComposerJsonFileContent = json_decode($packageComposerJsonFileContent);
+				$packageConfigurationData = Helpers::getProperty(
+					$packageComposerJsonFileContent->extra->{'composer-synchronizer'}, $this->projectType
+				);
 
-				if (isset($packageComposerJsonFileContent->extra->{'composer-synchronizer'}->{$this->projectType})) {
-					$data = $packageComposerJsonFileContent->extra->{'composer-synchronizer'}->{$this->projectType};
+				if ($packageConfigurationData){
+					$data = $packageConfigurationData;
 				}
 			}
 		}
 
-		$packageTemporaryDirectory = $this->tempDirectory . '/' . $package->getPrettyName();
-		$packageTemporaryConfigurationFilePath =
-			$packageTemporaryDirectory . '/' . $packageVersion . '/' . $this->projectType . '/config.json';
+		if ($this->remoteConfigurationsEnabled) {
+			$packageTemporaryDirectory = $this->tempDirectory . '/' . $package->getPrettyName();
+			$packageTemporaryConfigurationFilePath =
+				$packageTemporaryDirectory . '/' . $packageVersion . '/' . $this->projectType . '/config.json';
 
-		if ( ! $data
-			&& $this->composerEventType === Plugin::UNINSTALL_EVENT_TYPE
-			&& file_exists($packageTemporaryConfigurationFilePath)
-		) {
-			$data = json_decode(Helpers::loadFileContent($packageTemporaryConfigurationFilePath));
+			if ( ! $data
+				&& $this->composerEventType === Plugin::UNINSTALL_EVENT_TYPE
+				&& file_exists($packageTemporaryConfigurationFilePath)
+			) {
+				$data = json_decode(Helpers::loadFileContent($packageTemporaryConfigurationFilePath));
 
-		} elseif ( ! $data) {
-			$packageFilesPathPart = $packageVersion . '/' . $this->projectType;
-			$packageRemoteConfigurationFilesUrlPart = $package->getPrettyName() . '/' . $packageFilesPathPart;
-			$packageRemoteConfigurationFilesUrl =
-				self::API_CONTENTS_URL . '/' . $packageRemoteConfigurationFilesUrlPart;
+			} elseif ( ! $data) {
+				$packageFilesPathPart = $packageVersion . '/' . $this->projectType;
+				$packageRemoteConfigurationFilesUrlPart = $package->getPrettyName() . '/' . $packageFilesPathPart;
+				$packageRemoteConfigurationFilesUrl =
+					self::API_CONTENTS_URL . '/' . $packageRemoteConfigurationFilesUrlPart;
 
-			$packageRemoteConfigurationConfigFileUrl =
-				self::RAW_FILES_URL . '/' . $packageRemoteConfigurationFilesUrlPart . '/config.json';
+				$packageRemoteConfigurationConfigFileUrl =
+					self::RAW_FILES_URL . '/' . $packageRemoteConfigurationFilesUrlPart . '/config.json';
 
-			$packageRemoteConfigFileContent = Helpers::loadFileContent(
-				$packageRemoteConfigurationConfigFileUrl, null, false
-			);
-
-			if ($packageRemoteConfigFileContent) {
-				$this->packageConfigurationDirectory = $packageTemporaryDirectory . '/' . $packageFilesPathPart;
-
-				$this->downloadRemoteConfigurationFiles(
-					$packageRemoteConfigurationFilesUrl, $packageTemporaryDirectory
+				$packageRemoteConfigFileContent = Helpers::loadFileContent(
+					$packageRemoteConfigurationConfigFileUrl, null, false
 				);
 
-				if ( ! $this->remoteConfigurationFilesDownloadFailed) {
-					$packageTemporaryConfigurationFileContent = Helpers::loadFileContent(
-						$packageTemporaryConfigurationFilePath
+				if ($packageRemoteConfigFileContent) {
+					$this->packageConfigurationDirectory = $packageTemporaryDirectory . '/' . $packageFilesPathPart;
+					$this->downloadRemoteConfigurationFiles(
+						$packageRemoteConfigurationFilesUrl, $packageTemporaryDirectory
 					);
 
-					if ($packageTemporaryConfigurationFileContent) {
-						$data = json_decode($packageTemporaryConfigurationFileContent);
+					if ( ! $this->remoteConfigurationFilesDownloadFailed) {
+						$packageTemporaryConfigurationFileContent = Helpers::loadFileContent(
+							$packageTemporaryConfigurationFilePath
+						);
+
+						if ($packageTemporaryConfigurationFileContent) {
+							$data = json_decode($packageTemporaryConfigurationFileContent);
+						}
 					}
 				}
 			}
