@@ -78,9 +78,7 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 		);
 
 		foreach($this->packageConfiguration as $packageConfigurationSectionName => $values) {
-			if (isset($configurationSections[$packageConfigurationSectionName])
-				&& isset($configurationSections[$packageConfigurationSectionName][$this->composerEventType])
-			) {
+			if (isset($configurationSections[$packageConfigurationSectionName][$this->composerEventType])) {
 				$configurationSections[$packageConfigurationSectionName][$this->composerEventType]($values);
 			}
 		}
@@ -142,9 +140,12 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 	{
 		if ( ! $this->pathsPlaceholders) {
 			$pathsPlaceholders = $this->getPathsPlaceholders();
+			$projectPathsPlaceholdersReplacement = Helpers::getProperty(
+				$this->projectConfiguration, 'paths-placeholders'
+			);
 
-			if (isset($this->projectConfiguration->{'paths-placeholders'})) {
-				foreach ($this->projectConfiguration->{'paths-placeholders'} as $placeholder => $placeholderPath) {
+			if ($projectPathsPlaceholdersReplacement) {
+				foreach ($projectPathsPlaceholdersReplacement as $placeholder => $placeholderPath) {
 					$pathsPlaceholders[$placeholder] = $placeholderPath;
 				}
 			}
