@@ -14,7 +14,7 @@ declare(strict_types = 1);
 namespace ComposerSynchronizer;
 
 use Composer\IO\IOInterface;
-
+use stdClass;
 
 final class Helpers
 {
@@ -35,6 +35,29 @@ final class Helpers
 	{
 		self::$io->writeError(vsprintf('  - ' . $message, $parameters), true);
 	}
+
+
+	/**
+	 * @param array|stdClass $from
+	 * @param string|int $property
+	 * @return mixed|null
+	 */
+	public static function getProperty($from, $property)
+	{
+		$propertyValue = null;
+
+		if (is_array($from)) {
+			if (isset($from[$property])) {
+				$propertyValue = $from[$property];
+			}
+
+		} elseif (is_object($from) && isset($from->{$property})) {
+			$propertyValue = $from->{$property};
+		}
+
+		return $propertyValue;
+	}
+
 
 	/*************************** Files ***************************/
 
