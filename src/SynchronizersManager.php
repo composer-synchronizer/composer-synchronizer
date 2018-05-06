@@ -37,11 +37,6 @@ final class SynchronizersManager
 	private $composerEventType;
 
 	/**
-	 * @var stdClass
-	 */
-	private $configuration;
-
-	/**
 	 * @var string
 	 */
 	private $lockFilePath;
@@ -50,6 +45,11 @@ final class SynchronizersManager
 	 * @var PackagesManager
 	 */
 	private $packagesManager;
+
+	/**
+	 * @var stdClass
+	 */
+	private $projectConfiguration;
 
 	/**
 	 * @var string
@@ -68,11 +68,11 @@ final class SynchronizersManager
 
 
 	public function __construct(
-		stdClass $configuration,
+		stdClass $projectConfiguration,
 		string $eventType,
 		string $vendorDirectory
 	) {
-		$this->configuration = $configuration;
+		$this->projectConfiguration = $projectConfiguration;
 		$this->composerEventType = $eventType;
 		$this->vendorDirectory = $vendorDirectory;
 
@@ -85,13 +85,17 @@ final class SynchronizersManager
 
 	public function processPackage(PackageInterface $package): void
 	{
-		$synchronizer = $this->getSynchronizer($this->configuration->{'project-type'});
+		$synchronizer = $this->getSynchronizer($this->projectConfiguration->{'project-type'});
 
 		if ( ! $synchronizer)  {
 			return;
 		}
 
 		$this->processedPackage = $package;
+
+		if (Helpers::getProperty($this->projectConfiguration, 'disable-remote-configurations')) {
+			$this->packagesManager->disableRemoteConfigurations();
+		}
 
 		$this->packagesManager
 			->setComposerEventType($this->composerEventType)
@@ -116,14 +120,18 @@ final class SynchronizersManager
 		$synchronizer
 			->setComposerEventType($this->composerEventType)
 			->setPackageConfiguration($packageConfiguration)
-			->setProjectConfiguration($this->configuration)
+			->setProjectConfiguration($this->projectConfiguration)
 			->setProjectDirectory($this->projectDirectory)
 			->init()
 			->synchronize();
 
-		$isInstallEvent
-			? Helpers::appendToFile($this->lockFilePath, $package->getName() . PHP_EOL)
-			: Helpers::removeFromFile($this->lockFilePath, $package->getName() . PHP_EOL);
+		$nonLockablePackages = Helpers::getProperty($this->projectConfiguration, 'non-lockable-packages');
+
+		if ( ! ($nonLockablePackages && in_array($package->getName(), $nonLockablePackages))) {
+			$isInstallEvent
+				? Helpers::appendToFile($this->lockFilePath, $package->getName() . PHP_EOL)
+				: Helpers::removeFromFile($this->lockFilePath, $package->getName() . PHP_EOL);
+		}
 	}
 
 
