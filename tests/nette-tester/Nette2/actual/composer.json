@@ -4,7 +4,8 @@
         "composer-synchronizer/composer-synchronizer": "@dev",
         "machy8/webloader": "1.2.0",
 
-        "another/package": "@dev"
+        "another/package": "@dev",
+        "some/package": "@dev"
     },
     "extra": {
         "composer-synchronizer": {
