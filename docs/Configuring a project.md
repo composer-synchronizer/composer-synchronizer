@@ -31,3 +31,25 @@ then you can change the `tempDir` placehorder path to `tmp`.
     }
 }
 ````
+
+# Disabling remote configurations
+You can disable configurations downloading from [packages repository](https://github.com/composer-synchronizer/packages).
+````JSON
+"extra": {
+    "composer-synchronizer": {
+        "disable-remote-configurations": true
+    }
+}
+````
+
+# Keeping package unlocked (for development purposes)
+If you develop a package configuration, you might want to keep the package unlocked
+````JSON
+"extra": {
+    "composer-synchronizer": {
+        "non-lockable-packages": [
+            "some/package"
+        ]
+    }
+}
+````
