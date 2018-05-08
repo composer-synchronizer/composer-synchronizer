@@ -43,7 +43,7 @@ You can disable configurations downloading from [packages repository](https://gi
 ````
 
 # Keeping package unlocked (for development purposes)
-If you develop a package configuration, you might want to keep the package unlocked
+If you develop a package configuration, you might want to keep the package unlocked.
 ````JSON
 "extra": {
     "composer-synchronizer": {
