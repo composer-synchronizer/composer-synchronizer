@@ -1,4 +1,5 @@
 language: php
+cache: false
 
 php:
     - 7.1
@@ -14,6 +15,3 @@ script:
     - composer coding-standard
     - composer phpstan-analysis
     - sh tests/nette-tester/tests
-
-services:
-    - redis-server
