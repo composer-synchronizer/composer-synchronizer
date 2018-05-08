@@ -22,6 +22,5 @@
         {"type": "path", "url": "packages/another/package"},
         {"type": "path", "url": "packages/some/package"}
     ],
-    "minimal-stability": "dev",
-    "prefer-stable": true
+    "minimal-stability": "dev"
 }
