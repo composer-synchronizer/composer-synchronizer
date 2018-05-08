@@ -25,7 +25,7 @@ final class SynchronizersManager
 
 	private const ALLOWED_COMPOSER_TYPES = ['composer-plugin', 'library', null];
 
-	private const LOCK_FILE_NAME = 'composer-synchronizator.lock';
+	private const LOCK_FILE_NAME = 'composer-synchronizer.lock';
 
 	private const SYNCHRONIZERS_REGISTER = [
 		Synchronizers\Nette2\Nette2Synchronizer::class
