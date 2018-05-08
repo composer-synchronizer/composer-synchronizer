@@ -1,0 +1,15 @@
+{
+    "name": "another/package",
+    "extra": {
+        "composer-synchronizer": {
+            "nette2": {
+                "resources": {
+                    "extension.neon": "%configDir%/anotherPackage/"
+                },
+                "includes": [
+                    "anotherPackage/extension.neon"
+                ]
+            }
+        }
+    }
+}

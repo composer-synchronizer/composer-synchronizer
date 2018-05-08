@@ -16,46 +16,32 @@ namespace ComposerSynchronizer\Tests\Nette2\InstallEventTestCase;
 require_once '../bootstrap.php';
 
 use ComposerSynchronizer\Tests\AbstractInstallEventTestCase;
-use Tester\Assert;
 
 
-class InstallEventTestCase extends AbstractInstallEventTestCase
+final class InstallEventTestCase extends AbstractInstallEventTestCase
 {
 
 	public function testResourcesSynchronization(): void
 	{
-		Assert::true(is_file('actual/app/config/somePackage/extension.neon'));
-		Assert::matchFile('actual/app/config/somePackage/extension.neon',
-			file_get_contents('expected/install-event/extension.neon')
-		);
+		$this->matchFile('expected/install-event/extension.neon', 'actual/app/config/somePackage/extension.neon');
 
-		Assert::true(is_file('actual/temporaryFiles/cache/.gitignore'));
-		Assert::matchFile('actual/temporaryFiles/cache/.gitignore',
-			file_get_contents('expected/install-event/cache/.gitignore')
-		);
+		$this->matchFile('expected/install-event/cache/.gitignore', 'actual/temporaryFiles/cache/.gitignore');
 
-		Assert::true(is_file('actual/www/webtemp/.gitignore'));
-		Assert::matchFile('actual/www/webtemp/.gitignore',
-			file_get_contents('expected/install-event/webtemp/.gitignore')
-		);
-
+		$this->matchFile('expected/install-event/webtemp/.gitignore', 'actual/www/webtemp/.gitignore');
 	}
 
 
 	public function testGitignoreSynchronization(): void
 	{
-		Assert::true(is_file('actual/.gitignore'));
-		Assert::matchFile('actual/.gitignore',
-			file_get_contents('expected/install-event/.gitignore')
-		);
+		$this->matchFile('expected/install-event/.gitignore', 'actual/.gitignore');
 	}
 
 
 	public function testIncludesSyncronization(): void
 	{
-		Assert::true(is_file('actual/app/config/composer-synchronizer.neon'));
-		Assert::matchFile('actual/app/config/composer-synchronizer.neon',
-			file_get_contents('expected/install-event/app/config/composer-synchronizer.neon')
+		$this->matchFile(
+			'expected/install-event/app/config/composer-synchronizer.neon',
+			'actual/app/config/composer-synchronizer.neon'
 		);
 	}
 

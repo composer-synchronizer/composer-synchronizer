@@ -2,18 +2,23 @@
     "name": "nette2/project",
     "require": {
         "composer-synchronizer/composer-synchronizer": "@dev",
-        "some/package": "@dev",
-        "machy8/webloader": "1.2.0"
+        "machy8/webloader": "1.2.0",
+
+        "another/package": "@dev"
     },
     "extra": {
         "composer-synchronizer": {
             "project-type": "nette",
             "paths-placeholders": {
                 "tempDir": "temporaryFiles"
-            }
+            },
+            "non-lockable-packages": [
+                "another/package"
+            ]
         }
     },
     "repositories": [
+        {"type": "path", "url": "packages/another/package"},
         {"type": "path", "url": "packages/some/package"}
     ],
     "minimal-stability": "dev",

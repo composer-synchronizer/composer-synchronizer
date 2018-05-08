@@ -16,27 +16,23 @@ namespace ComposerSynchronizer\Tests\Nette2\InstallEventTestCase;
 require_once '../bootstrap.php';
 
 use ComposerSynchronizer\Tests\AbstractUninstallEventTestCase;
-use Tester\Assert;
 
 
-class UninstallEventTestCase extends AbstractUninstallEventTestCase
+final class UninstallEventTestCase extends AbstractUninstallEventTestCase
 {
 
 	public function testIncludesDesyncronization(): void
 	{
-		Assert::true(is_file('actual/app/config/composer-synchronizer.neon'));
-		Assert::matchFile('actual/app/config/composer-synchronizer.neon',
-			file_get_contents('expected/uninstall-event/app/config/composer-synchronizer.neon')
+		$this->matchFile(
+			'expected/uninstall-event/app/config/composer-synchronizer.neon',
+			'actual/app/config/composer-synchronizer.neon'
 		);
 	}
 
 
 	public function testGitignoreDesynchronization(): void
 	{
-		Assert::true(is_file('actual/.gitignore'));
-		Assert::matchFile('actual/.gitignore',
-			file_get_contents('expected/uninstall-event/.gitignore')
-		);
+		$this->matchFile('expected/uninstall-event/.gitignore', 'actual/.gitignore');
 	}
 
 }
