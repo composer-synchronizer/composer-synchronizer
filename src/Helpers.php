@@ -192,7 +192,7 @@ final class Helpers
 				self::createDirectory($destPathInfo['dirname']);
 			}
 
-			if (is_file($source) && preg_match('#\/$#', $dest)) {
+			if (is_file($source) && $destEndsWithSlash) {
 				$dest .= $sourcePathInfo['basename'];
 			}
 
