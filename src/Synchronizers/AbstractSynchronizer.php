@@ -182,7 +182,7 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 	private function createGitignoreSection(array $parameters): string
 	{
 		$openTag = self::GITIGNORE_OPEN_TAG . ' ' . $this->packageName . ' ' . self::GITIGNORE_HASHTAG_CHAIN;
-		$closeTag = self::GITIGNORE_CLOSE_TAG . ' ' . $this->packageName . ' ' . self::GITIGNORE_HASHTAG_CHAIN . ' ';
+		$closeTag = self::GITIGNORE_CLOSE_TAG . ' ' . $this->packageName . ' ' . self::GITIGNORE_HASHTAG_CHAIN;
 		$parameters = join(PHP_EOL, $parameters);
 		$parameters = $this->replacePathPlaceholders($parameters);
 		$packageSection = $openTag . PHP_EOL . $parameters . PHP_EOL . $closeTag . PHP_EOL;
