@@ -21,4 +21,6 @@ abstract class AbstractInstallEventTestCase extends AbstractTestCase
 
 	abstract public function testGitignoreSynchronization(): void;
 
+	abstract public function testNonLockablePackages(): void;
+
 }

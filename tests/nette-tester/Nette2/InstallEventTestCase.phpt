@@ -37,6 +37,15 @@ final class InstallEventTestCase extends AbstractInstallEventTestCase
 	}
 
 
+	public function testNonLockablePackages(): void
+	{
+		$this->matchFile(
+			'expected/install-event/composer-synchronizer.lock',
+			'actual/composer-synchronizer.lock'
+		);
+	}
+
+
 	public function testIncludesSyncronization(): void
 	{
 		$this->matchFile(
