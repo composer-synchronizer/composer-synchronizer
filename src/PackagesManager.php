@@ -206,12 +206,15 @@ final class PackagesManager
 
 		if ($packageComposerJsonFileContent) {
 			$packageComposerJsonFileContent = json_decode($packageComposerJsonFileContent);
-			$packageConfigurationData = Helpers::getProperty(
-				$packageComposerJsonFileContent->extra->{'composer-synchronizer'}, $this->projectType
-			);
 
-			if ($packageConfigurationData){
-				$data = $packageConfigurationData;
+			if (isset($packageComposerJsonFileContent->extra->{'composer-synchronizer'})) {
+				$packageConfigurationData = Helpers::getProperty(
+					$packageComposerJsonFileContent->extra->{'composer-synchronizer'}, $this->projectType
+				);
+
+				if ($packageConfigurationData) {
+					$data = $packageConfigurationData;
+				}
 			}
 		}
 
