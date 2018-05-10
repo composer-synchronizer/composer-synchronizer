@@ -82,6 +82,11 @@ final class Helpers
 			return;
 		}
 
+		if ( ! is_dir($source)) {
+			Helpers::consoleMessage("File or directory '%s' not found.", [$source]);
+			return;
+		}
+
 		$sourceHandle = opendir($source);
 
 		if ( ! $sourceHandle) {
