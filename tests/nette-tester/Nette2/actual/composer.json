@@ -9,7 +9,7 @@
     },
     "extra": {
         "composer-synchronizer": {
-            "project-type": "nette",
+            "project-type": "nette2",
             "paths-placeholders": {
                 "tempDir": "temporaryFiles"
             },
