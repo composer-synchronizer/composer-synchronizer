@@ -13,8 +13,11 @@ declare(strict_types = 1);
 
 namespace ComposerSynchronizer\Synchronizers\Yii2;
 
+use ComposerSynchronizer\Helpers;
+use ComposerSynchronizer\Plugin;
 use ComposerSynchronizer\Synchronizers\AbstractSynchronizer;
 use ComposerSynchronizer\Synchronizers\SynchronizerInterface;
+use stdClass;
 
 
 class Yii2Synchronizer extends AbstractSynchronizer
@@ -81,7 +84,7 @@ class Yii2Synchronizer extends AbstractSynchronizer
 	/*************************** Synchronization methods ***************************/
 
 
-	protected function synchronizeConfigs(array $configFiles): void
+	protected function synchronizeConfigs(stdClass $configFiles): void
 	{
 		foreach($configFiles as $variableName => $path) {
 			$rowToAdd = $this->createRow($variableName, $path);
@@ -90,7 +93,7 @@ class Yii2Synchronizer extends AbstractSynchronizer
 	}
 
 
-	protected function desynchronizeConfigs(array $configFiles): void
+	protected function desynchronizeConfigs(stdClass $configFiles): void
 	{
 		foreach($configFiles as $variableName => $path) {
 			$rowToRemove = $this->createRow($variableName, $path);
@@ -101,7 +104,7 @@ class Yii2Synchronizer extends AbstractSynchronizer
 
 	private function createRow(string $variableName, string $path): string
 	{
-		return '$' . $variableName . ' = require_once __DIR__ . \'/' . ltrim($path, '/') . PHP_EOL;
+		return '$' . $variableName . ' = require_once __DIR__ . \'/' . ltrim($path, '/') . ';' . PHP_EOL;
 	}
 
 }
