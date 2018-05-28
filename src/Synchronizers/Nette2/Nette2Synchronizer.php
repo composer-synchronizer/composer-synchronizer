@@ -25,7 +25,7 @@ final class Nette2Synchronizer extends AbstractSynchronizer
 	private const CONFIGURATION_FILE = 'composer-synchronizer.neon';
 	private const CONFIGURATION_FILE_INDENTATION_CHARACTER = "\t";
 
-	private const PATH_PLACEHOLDERS = [
+	private const PATHS_PLACEHOLDERS = [
 		'appDir' => 'app',
 		'configDir' => 'app/config',
 		'logDir' => 'log',
@@ -42,26 +42,11 @@ final class Nette2Synchronizer extends AbstractSynchronizer
 	public function init(): SynchronizerInterface
 	{
 		$this->configurationFile =
-			$this->projectDirectory . '/' . self::PATH_PLACEHOLDERS['configDir'] . '/' . self::CONFIGURATION_FILE;
+			$this->projectDirectory . '/' . self::PATHS_PLACEHOLDERS['configDir'] . '/' . self::CONFIGURATION_FILE;
 
 		Helpers::copy(__DIR__ . '/resources/' . self::CONFIGURATION_FILE, $this->configurationFile);
 
 		return $this;
-	}
-
-
-	public function getConfigurationSections(): array
-	{
-		return [
-			'includes' => [
-				Plugin::INSTALL_EVENT_TYPE => function ($sectionContent) {
-					$this->synchronizeIncludes($sectionContent);
-				},
-				Plugin::UNINSTALL_EVENT_TYPE => function ($sectionContent) {
-					$this->desynchronizeIncludes($sectionContent);
-				}
-			]
-		];
 	}
 
 
@@ -77,9 +62,24 @@ final class Nette2Synchronizer extends AbstractSynchronizer
 	}
 
 
-	public function getPathsPlaceholders(): array
+	protected function getConfigurationSections(): array
 	{
-		return self::PATH_PLACEHOLDERS;
+		return [
+			'includes' => [
+				Plugin::INSTALL_EVENT_TYPE => function ($sectionContent) {
+					$this->synchronizeIncludes($sectionContent);
+				},
+				Plugin::UNINSTALL_EVENT_TYPE => function ($sectionContent) {
+					$this->desynchronizeIncludes($sectionContent);
+				}
+			]
+		];
+	}
+
+
+	protected function getPathsPlaceholders(): array
+	{
+		return self::PATHS_PLACEHOLDERS;
 	}
 
 
@@ -89,7 +89,7 @@ final class Nette2Synchronizer extends AbstractSynchronizer
 	protected function synchronizeIncludes(array $includes): void
 	{
 		foreach($includes as $include) {
-			$rowToAdd = self::CONFIGURATION_FILE_INDENTATION_CHARACTER . '- ' . $include . PHP_EOL;
+			$rowToAdd = $this->createRow($include);
 			Helpers::appendToFile($this->configurationFile, $rowToAdd);
 		}
 	}
@@ -98,9 +98,15 @@ final class Nette2Synchronizer extends AbstractSynchronizer
 	protected function desynchronizeIncludes(array $includes): void
 	{
 		foreach($includes as $include) {
-			$rowToAdd = self::CONFIGURATION_FILE_INDENTATION_CHARACTER . '- ' . $include . PHP_EOL;
-			Helpers::removeFromFile($this->configurationFile, $rowToAdd);
+			$rowToRemove = $this->createRow($include);
+			Helpers::removeFromFile($this->configurationFile, $rowToRemove);
 		}
+	}
+
+
+	private function createRow(string $include): string
+	{
+		return self::CONFIGURATION_FILE_INDENTATION_CHARACTER . '- ' . $include . PHP_EOL;
 	}
 
 }
