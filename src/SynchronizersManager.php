@@ -23,8 +23,6 @@ use stdClass;
 final class SynchronizersManager
 {
 
-	private const ALLOWED_COMPOSER_TYPES = ['composer-plugin', 'library', null];
-
 	private const LOCK_FILE_NAME = 'composer-synchronizer.lock';
 
 	private const SYNCHRONIZERS_REGISTER = [
@@ -107,7 +105,6 @@ final class SynchronizersManager
 		$isInstallEvent = $this->composerEventType === Plugin::INSTALL_EVENT_TYPE;
 
 		if ( ! $packageConfiguration
-			|| ! in_array($packageConfiguration->packageType, self::ALLOWED_COMPOSER_TYPES, true)
 			|| $isInstallEvent && Helpers::fileContains($this->lockFilePath, $this->processedPackage->getPrettyName())
 		) {
 			return;
