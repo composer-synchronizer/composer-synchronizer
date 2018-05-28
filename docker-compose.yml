@@ -3,8 +3,6 @@ services:
     server:
         container_name: synchronizer-package
         working_dir: /var/www/html
-        ports:
-            - '80:80'
         build: .
         volumes:
             - .:/var/www/html
