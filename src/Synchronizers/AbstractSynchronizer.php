@@ -64,10 +64,25 @@ abstract class AbstractSynchronizer implements SynchronizerInterface
 	private $pathsPlaceholders;
 
 
-	abstract protected function getConfigurationSections(): array;
-
-
 	abstract protected function getPathsPlaceholders(): array;
+
+
+	public function init(): SynchronizerInterface
+	{
+		return $this;
+	}
+
+
+	public static function getAliases(): array
+	{
+		return [];
+	}
+
+
+	protected function getConfigurationSections(): array
+	{
+		return [];
+	}
 
 
 	public final function synchronize(): void
