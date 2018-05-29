@@ -20,8 +20,7 @@
     },
     "scripts": {
         "coding-standard": "ecs check src --config tests/coding-standard/easy-coding-standard.yml",
-        "phpstan-analysis": "phpstan analyse src -c tests/phpstan/phpstan.neon --level max --autoload-file=/vendor/autoload.php",
-        "nette-tester": ""
+        "phpstan-analysis": "phpstan analyse src -c tests/phpstan/phpstan.neon --level max --autoload-file=/vendor/autoload.php"
     },
     "extra": {
         "class": "ComposerSynchronizer\\Plugin",
