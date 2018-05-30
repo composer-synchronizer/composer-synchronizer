@@ -25,7 +25,7 @@ this section is removed.
 
 ## Specific configuration options ##
 
-### CakePhp ()
+### [CakePhp framework](https://cakephp.org/)
 #### CakePhp 3.x
 - Versioned name: `cakePhp3`
 - Alias: `cakePhp`
@@ -50,7 +50,7 @@ of some package, the variable and the path is removed.
 ````
 
 
-### [Nette](https://nette.org/en/)
+### [Nette framework](https://nette.org/en/)
 #### Nette 2.x
 - Versioned name: `nette2`
 - Alias: `nette`
@@ -77,7 +77,7 @@ the path to that package extension file is removed.
 ....
 ````
 
-### [Yii](https://www.yiiframework.com/)
+### [Yii framework](https://www.yiiframework.com/)
 #### Yii 2.x
 - Versioned name: `yii2`
 - Alias: `yii`
