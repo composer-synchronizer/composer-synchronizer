@@ -26,6 +26,7 @@ final class SynchronizersManager
 	private const LOCK_FILE_NAME = 'composer-synchronizer.lock';
 
 	private const SYNCHRONIZERS_REGISTER = [
+		Synchronizers\CakePhp3\CakePhp3Synchronizer::class,
 		Synchronizers\Nette2\Nette2Synchronizer::class,
 		Synchronizers\Yii2\Yii2Synchronizer::class
 	];
