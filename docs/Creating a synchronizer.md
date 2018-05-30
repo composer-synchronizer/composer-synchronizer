@@ -3,9 +3,10 @@ If you want to create a synchronizer for your favorite framework, you need to se
 Creating a new synchronizer plugin is very easy and all you need to do is
 extend the `AbstractSynchronizer` class and register the synchronizer in the
 `SYNCHRONIZERS_REGISTER` constant in the `SynchronizersManager` class.
-The name of the synchronizer should be a camelcase version of the project type with the Synchronizer suffix => `nette2` - `Nette2Synchronizer`.
+The name of the synchronizer should be a camelcase version of the project
+type with the Synchronizer suffix for example => `nette2` - `Nette2Synchronizer`.
 
-## init()
+## init() (Optional)
 This method is intended for some preparations before the synchronization itself like
 creating directories and files, configuring variables etc.
 
@@ -13,7 +14,7 @@ creating directories and files, configuring variables etc.
 Returns paths placeholders used in the AbstractSynchronizer class for synchronizing resources,
 and a gitignore file. Paths returned in this method are always against the project root directory.
 
-## getConfigurationSections()
+## getConfigurationSections() (Optional)
 Returns an array of key value pairs where the key is the name of the section in the composer.json and
 the function callback is responsible for its processing.
 

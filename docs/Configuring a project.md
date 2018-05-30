@@ -5,7 +5,8 @@ you can add `project-type` and `paths-placeholders` section.
 **Project type (project-type)**
 
 Depends on which project you use. If you use `Nette 2.0`, then the suitable
-synchronizer is `nette2` or its alias `nette`.
+synchronizer is `nette2` or its alias `nette`. To see all available project
+types see [list of available synchronizers](https://github.com/composer-synchronizer/composer-synchronizer/blob/master/docs/Available%20synchronizers.md)
 
 ````JSON
 "extra": {
