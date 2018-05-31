@@ -26,8 +26,6 @@ final class InstallEventTestCase extends AbstractInstallEventTestCase
 		$this->matchFile('expected/install-event/extension.neon', 'actual/app/config/somePackage/extension.neon');
 
 		$this->matchFile('expected/install-event/cache/.gitignore', 'actual/temporaryFiles/cache/.gitignore');
-
-		$this->matchFile('expected/install-event/webtemp/.gitignore', 'actual/www/webtemp/.gitignore');
 	}
 
 
