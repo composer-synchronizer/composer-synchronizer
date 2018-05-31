@@ -22,10 +22,10 @@ use ComposerSynchronizer\Synchronizers\SynchronizerInterface;
 class CakePhp3Synchronizer extends AbstractSynchronizer
 {
 
-	private const CONFIGURATION_FILE = 'composer-synchronizer.php';
+	private const CONFIGURATION_FILE_CONFIGS = 'composer-synchronizer-configs.php';
+	private const CONFIGURATION_FILE_PLUGINS = 'composer-synchronizer-plugins.php';
 
 	private const PATHS_PLACEHOLDERS = [
-		'commandsDir' => 'commands',
 		'configDir' => 'config',
 		'webrootDir' => 'webroot'
 	];
@@ -35,13 +35,22 @@ class CakePhp3Synchronizer extends AbstractSynchronizer
 	 */
 	private $configurationFile;
 
+	/**
+	 * @var string
+	 */
+	private $pluginsFile;
+
 
 	public function init(): SynchronizerInterface
 	{
-		$this->configurationFile =
-			$this->projectDirectory . '/' . self::PATHS_PLACEHOLDERS['configDir'] . '/' . self::CONFIGURATION_FILE;
+		$this->configurationFile = $this->projectDirectory
+			. '/' . self::PATHS_PLACEHOLDERS['configDir'] . '/' . self::CONFIGURATION_FILE_CONFIGS;
 
-		Helpers::copy(__DIR__ . '/resources/' . self::CONFIGURATION_FILE, $this->configurationFile);
+		$this->pluginsFile = $this->projectDirectory
+			. '/' . self::PATHS_PLACEHOLDERS['configDir'] . '/' . self::CONFIGURATION_FILE_PLUGINS;
+
+		Helpers::copy(__DIR__ . '/resources/' . self::CONFIGURATION_FILE_CONFIGS, $this->configurationFile);
+		Helpers::copy(__DIR__ . '/resources/' . self::CONFIGURATION_FILE_PLUGINS, $this->pluginsFile);
 
 		return $this;
 	}
@@ -75,7 +84,15 @@ class CakePhp3Synchronizer extends AbstractSynchronizer
 				Plugin::UNINSTALL_EVENT_TYPE => function ($sectionContent) {
 					$this->desynchronizeConfigs($sectionContent);
 				}
-			]
+			],
+			'plugins' => [
+				Plugin::INSTALL_EVENT_TYPE => function ($sectionContent) {
+					$this->synchronizePlugins($sectionContent);
+				},
+				Plugin::UNINSTALL_EVENT_TYPE => function ($sectionContent) {
+					$this->desynchronizePlugins($sectionContent);
+				}
+			],
 		];
 	}
 
@@ -101,9 +118,27 @@ class CakePhp3Synchronizer extends AbstractSynchronizer
 	}
 
 
+	protected function synchronizePlugins(array $pluginFiles): void
+	{
+		foreach($pluginFiles as $variableName => $path) {
+			$rowToAdd = $this->createRow($path);
+			Helpers::appendToFile($this->pluginsFile, $rowToAdd);
+		}
+	}
+
+
+	protected function desynchronizePlugins(array $pluginFiles): void
+	{
+		foreach($pluginFiles as $variableName => $path) {
+			$rowToRemove = $this->createRow($path);
+			Helpers::removeFromFile($this->pluginsFile, $rowToRemove);
+		}
+	}
+
+
 	private function createRow(string $path): string
 	{
-		return 'require_once __DIR__ . \'/' . ltrim($path, '/') . ';' . PHP_EOL;
+		return 'require_once __DIR__ . \'/' . ltrim($path, '/') . '\';' . PHP_EOL;
 	}
 
 }
