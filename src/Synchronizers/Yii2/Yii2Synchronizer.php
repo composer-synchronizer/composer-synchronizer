@@ -104,7 +104,7 @@ class Yii2Synchronizer extends AbstractSynchronizer
 
 	private function createRow(string $variableName, string $path): string
 	{
-		return '$' . $variableName . ' = require_once __DIR__ . \'/' . ltrim($path, '/') . ';' . PHP_EOL;
+		return '$' . $variableName . ' = require_once __DIR__ . \'/' . ltrim($path, '/') . '\';' . PHP_EOL;
 	}
 
 }
